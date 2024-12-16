@@ -1,0 +1,316 @@
+name: quickemu-complete
+base: core24
+version: '0.1.0'
+summary: Quickemu creates and runs optimised virtual machines.
+description: |
+ Simple script to "manage" Qemu virtual machines. Each virtual machine
+ configuration is a few lines long requiring minimal setup. The main objective
+ of the project is to enable quick testing of desktop Linux distributions where
+ the virtual machines configuration and disk images can be stored anywhere,
+ such as external USB storage or your home directory. Windows and macOS guests
+ are also supported.
+
+grade: stable
+confinement: strict
+
+plugs:
+  gtk-3-themes:
+    interface: content
+    target: $SNAP/share/themes
+    default-provider: gtk-common-themes
+  icon-themes:
+    interface: content
+    target: $SNAP/share/icons
+    default-provider: gtk-common-themes
+
+layout:
+  /usr/bin/nproc:
+    bind-file: $SNAP/usr/bin/nproc
+  #/sys/class/dmi/id/sys_vendor:
+  #  bind-file: $SNAP/sys/class/dmi/id/sys_vendor
+  #/home/glass/.config/gtk-3.0/colors.css:
+  #  bind: $SNAP/etc/gtk-3.0/colors.css
+  #/usr/sbin/smbd:
+  #  bind-file: $SNAP/usr/sbin/smbd
+  #/usr/share/qemu:
+  #  bind: $SNAP/usr/share/qemu
+  #/usr/share/seabios:
+  #  bind: $SNAP/usr/share/seabios
+  #/usr/share/OVMF:
+  #  bind: $SNAP/usr/share/OVMF
+
+slots:
+  dbus-daemon:
+    interface: dbus
+    bus: session
+    name: org.quickgui.Quickgui
+
+apps:
+  qemu-system-x86:
+    command: usr/bin/qemu-system-x86_64
+    environment:
+      LD_LIBRARY_PATH: $SNAP/usr/lib:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/lib:$SNAP/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/ceph
+      GDK_SCALE: ' '
+    plugs:
+      - audio-playback
+      - audio-record
+      - kvm
+      - home
+      - opengl
+      - process-control
+      - raw-usb
+      - removable-media
+      - screen-inhibit-control
+      - network
+      - network-bind
+      - network-control
+      - unity7
+
+  quickemu:
+    command: usr/bin/quickemu
+    environment:
+      LD_LIBRARY_PATH: $SNAP/usr/lib:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/lib:$SNAP/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/ceph
+      GDK_SCALE: ' '
+    plugs:
+      - audio-playback
+      - audio-record
+      - kvm
+      - home
+      - opengl
+      - process-control
+      - raw-usb
+      - removable-media
+      - screen-inhibit-control
+      - network
+      - network-bind
+      - network-control
+      - unity7
+
+  quickget:
+    command: usr/bin/quickget
+    plugs:
+      - browser-support
+      - network
+      - network-bind
+      - home
+
+  quickreport:
+    command: usr/bin/quickreport
+    plugs:
+      - browser-support
+      - network
+      - network-bind
+
+  chunkcheck:
+    command: usr/bin/chunkcheck
+    plugs:
+      - browser-support
+      - network
+      - network-bind
+
+  #windowskey:
+  #  command: usr/bin/windowskey
+
+  quickgui:
+    command: usr/share/quickgui/quickgui
+    #desktop: usr/share/applications/quickgui.desktop
+    extensions:
+      - gnome
+    plugs:
+      - desktop
+      - desktop-legacy
+      - gsettings
+      - wayland
+      - x11
+      - screen-inhibit-control
+      - network-control
+      - network-status
+      - network-bind
+      - network
+      - home
+      - kvm
+    slots:
+      - dbus-daemon
+
+
+parts:
+  #ovmf:
+  #  plugin: dump
+  #  source: http://launchpadlibrarian.net/707956428/ovmf_2023.11-4_all.deb
+  #  source-type: deb
+
+  #qemu-system-x86:
+  #  plugin: dump
+  #  source: https://answers.launchpad.net/~ubuntu-security-proposed/+archive/ubuntu/ppa/+build/26305425/+files/qemu-system-x86_4.2-3ubuntu6.27_amd64.deb
+  #  source-type: deb
+
+    #stage-packages:
+    #- cpu-checker
+    #- ibverbs-providers
+    #- ipxe-qemu
+    #- ipxe-qemu-256k-compat-efi-roms
+    #- jq
+    #- libbpf1
+    #- libbrlapi0.8
+    #- libcacard0
+    #- libdaxctl1
+    #- libdecor-0-0
+    #- libdecor-0-plugin-1-cairo
+    #- libfdt1
+    #- libgfapi0
+    #- libgfrpc0
+    #- libgfxdr0
+    #- libglusterfs0
+    #- libibverbs1
+    #- libiscsi7
+    #- libjq1
+    #- libndctl6
+    #- libonig5
+    #- libphodav-3.0-0
+    #- libphodav-3.0-common
+    #- libpmem1
+    #- libpmemobj1
+    #- librados2
+    #- librbd1
+    #- librdmacm1
+    #- libsdl2-2.0-0
+    #- libslirp0
+    #- libsoup-3.0-0
+    #- libsoup-3.0-common
+    #- libspice-client-glib-2.0-8
+    #- libspice-client-gtk-3.0-5
+    #- libspice-server1
+    #- libtpms0
+    #- libusbredirhost1
+    #- libusbredirparser1
+    #- libvirglrenderer1
+    #- libvte-2.91-0
+    #- libvte-2.91-common
+    #- msr-tools
+    ##- ovmf
+    #- qemu-block-extra
+    #- qemu-efi-aarch64
+    #- qemu-efi-arm
+    ##- qemu-system
+    ##- qemu-system-arm
+    ##- qemu-system-common
+    ##- qemu-system-data
+    ##- qemu-system-gui
+    ##- qemu-system-mips
+    ##- qemu-system-misc
+    ##- qemu-system-ppc
+    ##- qemu-system-s390x
+    ##- qemu-system-sparc
+    ##- qemu-system-x86
+    #- qemu-system-modules-spice
+    #- qemu-utils
+    #- seabios
+    #- spice-client-glib-usb-acl-helper
+    #- spice-client-gtk
+    #- swtpm
+    #- zsync
+    #- curl
+    #- util-linux
+    #- pciutils
+    #- procps
+
+  quickemu:
+    plugin: dump
+    ## на 4.9.6 баг с ovmf
+    #source: https://github.com/quickemu-project/quickemu/releases/download/4.9.6/quickemu_4.9.6-1_all.deb
+    source: https://github.com/quickemu-project/quickemu/releases/download/4.9.5/quickemu_4.9.5-1_all.deb
+    source-type: deb
+    
+    stage-packages:
+      - bash
+      - coreutils
+      - curl
+      - genisoimage
+      - grep
+      - jq
+      - mesa-utils
+      - ovmf
+      - pciutils
+      - procps
+      - python3
+      - sed
+      - socat
+      - spice-client-gtk
+      - swtpm-tools
+      - unzip
+      - usbutils
+      - util-linux
+      - uuid-runtime
+      - xdg-user-dirs
+      - zsync
+      - qemu-system
+      - qemu-block-extra
+      - qemu-efi-aarch64
+      - qemu-efi-arm
+      - qemu-system-arm
+      - qemu-system-common
+      - qemu-system-data
+      - qemu-system-gui
+      - qemu-system-mips
+      - qemu-system-misc
+      - qemu-system-ppc
+      - qemu-system-s390x
+      - qemu-system-sparc
+      - qemu-system-x86
+      - qemu-system-modules-spice
+      - qemu-utils
+
+  quickgui:
+    plugin: flutter
+    source: https://github.com/quickemu-project/quickgui/archive/refs/tags/1.2.10.tar.gz
+    flutter-target: lib/main.dart
+
+    build-snaps:
+    - flutter
+
+    stage-packages:
+    - libgtk-3-dev
+    - libglib2.0-dev
+    - libgdk-pixbuf2.0-dev
+    - libpango1.0-dev
+    - libgstreamer1.0-dev
+    - libgstreamer-plugins-base1.0-dev
+    - libepoxy0
+    - libatk1.0-0t642
+    - libgtk-3-bin
+    - libgtk-3-common
+    - libharfbuzz0b
+    - libharfbuzz-subset0
+    - libharfbuzz-gobject0
+    - libpango-1.0-0
+    - libpangocairo-1.0-0
+    - libegl-mesa0
+    - libgl1-mesa-dri
+    - libglapi-mesa
+    - libglu1-mesa
+    - libglx-mesa0
+    - mesa-utils
+    - mesa-utils-bin
+    - mesa-va-drivers
+    - mesa-vdpau-drivers
+    - mesa-vulkan-drivers
+    - libatk1.0-0t64
+
+
+    override-build: |
+      git clone --depth 1 -b stable https://github.com/flutter/flutter.git $CRAFT_PART_BUILD/flutter-distro
+      flutter precache --linux
+      flutter pub get
+      flutter config --enable-linux-desktop
+      flutter build linux --release --verbose --target lib/main.dart
+
+    override-stage: echo Skip
+
+    override-prime: |
+      mkdir -p $CRAFT_PRIME/usr/share
+      cp -pr $CRAFT_PART_BUILD/build/linux/x64/release/bundle $CRAFT_PRIME/usr/share/quickgui
+      cp -pr --remove-destination $CRAFT_STAGE/* $CRAFT_PRIME/.
+
+environment:
+    __EGL_VENDOR_LIBRARY_DIRS: $SNAP/etc/glvnd/egl_vendor.d:$SNAP/usr/share/glvnd/egl_vendor.d
+    LIBGL_DRIVERS_PATH: $SNAP/usr/lib/x86_64-linux-gnu/dri
